@@ -44,10 +44,13 @@ export default function Login() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    setLoading(true);
+    // Simulate an async operation like a server request
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setLoading(false);
   }
 
   return (
@@ -87,12 +90,7 @@ export default function Login() {
               </FormItem>
             )}
           />
-          <Button
-            onClick={handleSubmit}
-            variant="secondary"
-            type="submit"
-            disabled={loading}
-          >
+          <Button variant="secondary" type="submit" disabled={loading}>
             {loading && <Spinner className="mr-2" />}
             {loading ? 'Submiting…' : 'Submit'}
           </Button>
