@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -23,42 +23,65 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import type { B } from 'node_modules/react-router/dist/development/router-CwNp5l9u.mjs';
+import { updateOrder, addOrder } from './orderApi';
+import { type Product } from './types';
 
 const formSchema = z.object({
+  id: z.number().optional(),
   product: z.string().min(5, {
     message: 'Product must be at least 5 characters.',
   }),
-  price: z.coerce.number().min(1, {
+  price: z.number().min(1, {
     message: 'Price must be at least 1.',
   }),
-  number: z.coerce.number().min(1, {
+  number: z.number().min(1, {
     message: 'Number must be at least 1.',
   }),
 });
 
-export function AddOrder({ isEdit = false }: { isEdit?: boolean }) {
+type FormValues = z.infer<typeof formSchema>;
+
+export function AddOrder({
+  isEdit = false,
+  productInfo,
+  onSuccess,
+}: {
+  isEdit?: boolean;
+  productInfo?: Product;
+  onSuccess?: () => void;
+}) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const form = useForm({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       product: '',
       price: 0,
       number: 0,
+      id: 0,
     },
   });
+
+  useEffect(() => {
+    if (isEdit && productInfo) {
+      form.reset(productInfo);
+    }
+  }, [productInfo]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     setLoading(true);
-    // Simulate an async operation like a server request
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    if (isEdit) {
+      await updateOrder(values.id, values);
+    } else {
+      await addOrder(values);
+    }
+
+    if (onSuccess) onSuccess();
     setLoading(false);
+    handleClose();
   }
 
   const handleClose = () => {
@@ -111,7 +134,11 @@ export function AddOrder({ isEdit = false }: { isEdit?: boolean }) {
                   <FormItem>
                     <FormLabel>Price</FormLabel>
                     <FormControl>
-                      <Input onChange={(e) => field.onChange(e.target.value)} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormDescription>
                       This is your Product price.
@@ -127,7 +154,11 @@ export function AddOrder({ isEdit = false }: { isEdit?: boolean }) {
                   <FormItem>
                     <FormLabel>Number</FormLabel>
                     <FormControl>
-                      <Input onChange={(e) => field.onChange(e.target.value)} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormDescription>
                       This is your Product number.

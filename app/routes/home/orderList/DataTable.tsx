@@ -17,16 +17,21 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onRefresh?: () => Promise<void>;
 }
 
 export default function DataTable<TData, TValue>({
   columns,
   data,
+  onRefresh,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    meta: {
+      onRefresh,
+    },
   });
 
   return (

@@ -10,8 +10,20 @@ import {
   AlertDialogTrigger,
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
+import { deleteOrder } from './orderApi';
+import { type Product } from './types';
 
-export default function Delete() {
+export default function Delete({
+  id,
+  onSuccess,
+}: {
+  id: Product['id'];
+  onSuccess?: () => void;
+}) {
+  const handleDelete = async () => {
+    await deleteOrder(id);
+    if (onSuccess) onSuccess();
+  };
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -33,7 +45,7 @@ export default function Delete() {
           <AlertDialogCancel className="cursor-pointer">
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction className="cursor-pointer">
+          <AlertDialogAction className="cursor-pointer" onClick={handleDelete}>
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>
