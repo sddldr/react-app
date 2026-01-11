@@ -1,25 +1,41 @@
+'use client';
 import { columns, type Payment } from './columns';
 import DataTable from './DataTable';
+import { AddOrder } from '../AddOrder';
+import { useEffect, useState } from 'react';
 
 async function getData(): Promise<Payment[]> {
   // Fetch data from your API here.
   return [
     {
       id: '728ed52f',
-      amount: 100,
-      status: 'pending',
-      email: 'm@example.com',
+      product: 'Product Name',
+      price: 100,
+      number: 5,
     },
     // ...
   ];
 }
 
-export default async function DemoPage() {
-  const data = await getData();
+export default function OrderList() {
+  const [tableData, setTableData] = useState<Payment[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getData();
+      setTableData(data);
+    }
+    fetchData();
+  }, []);
 
   return (
     <div className="py-10">
-      <DataTable columns={columns} data={data} />
+      <main className="mx-auto max-w-7xl px-6 py-20 text-center">
+        <div className="flex justify-end mb-4">
+          <AddOrder />
+        </div>
+        <DataTable columns={columns} data={tableData} />
+      </main>
     </div>
   );
 }
