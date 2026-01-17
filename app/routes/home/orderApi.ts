@@ -16,12 +16,11 @@ export const addOrder = (data: Omit<Product, 'id'>): Promise<Product> => {
 };
 
 export const updateOrder = (
-  id: Product['id'],
   data: Partial<Omit<Product, 'id'>>,
 ): Promise<Product> => {
   return request<Product>({
     method: 'PUT',
-    url: `/products/${id}`,
+    url: '/products/update',
     data,
   });
 };

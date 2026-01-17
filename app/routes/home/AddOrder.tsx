@@ -74,7 +74,7 @@ export function AddOrder({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     if (isEdit) {
-      await updateOrder(values.id, values);
+      await updateOrder(values);
     } else {
       await addOrder(values);
     }
