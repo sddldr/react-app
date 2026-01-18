@@ -1,4 +1,5 @@
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
+import { navigationHelper } from '~/utils/navigation';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -6,6 +7,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 api.interceptors.request.use(
@@ -34,6 +36,7 @@ api.interceptors.response.use(
     switch (response.status) {
       case 401:
         console.error('Unauthorized');
+        navigationHelper.replace('/login/Login');
         break;
       case 403:
         console.error('Forbidden');
