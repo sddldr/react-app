@@ -54,7 +54,7 @@ api.interceptors.response.use(
 
 export default api;
 
-export async function request<T>(config: AxiosRequestConfig): Promise<T> {
+export async function request<T, D = any>(config: AxiosRequestConfig<D>): Promise<T> {
   const res: AxiosResponse<T> = await api.request<T>(config);
   return res.data;
 }
