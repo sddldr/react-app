@@ -8,7 +8,7 @@ export const getOrders = (): Promise<Product[]> => {
 };
 
 export const addOrder = (data: Omit<Product, 'id'>): Promise<Product> => {
-  return request<Product>({
+  return request<Product, Omit<Product, 'id'>>({
     method: 'POST',
     url: '/products',
     data,
